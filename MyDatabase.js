@@ -8,11 +8,19 @@ const client = new Client({
   port: 5432
 });
 
+const myclient = new Client({
+    user: "user",
+    host: "localhost",
+    database: "mydatabase",
+    password: "pass",
+    port: 5432
+  });
+
 client.connect();
 // function to save a new visitor to MyDatabase
 const addNewVisitor = async(name, age, visit_date, visit_time, assistant_name, comments) => {
     try {
-        let results = await client.query(
+        let result = await client.query(
 
         `INSERT INTO visitors(
             visitor_name, 
@@ -27,24 +35,23 @@ const addNewVisitor = async(name, age, visit_date, visit_time, assistant_name, c
         [name, age, visit_date, visit_time, assistant_name, comments]
 
         );
-        return results.rows;
+        return result.rows;
     } catch (e) {
         console.log(e);
         throw e;
     }
 };
 
-// addNewVisitor("Nolo", 12, "04/02/2020", "15:50", "Sihle", "none");
-// addNewVisitor("KC", 12, "04/02/2020", "15:50", "Sihle", "none");
-// addNewVisitor("Sihle", 12, "04/02/2020", "15:50", "Sihle", "none");
-// addNewVisitor("Sbongile", 13, "04/02/2020", "15:50", "Sihle", "none");
+addNewVisitor("Nolo", 12, "04/02/2020", "15:50", "Sihle", "none");
+addNewVisitor("KC", 12, "04/02/2020", "15:50", "Sihle", "none");
+addNewVisitor("Sihle", 12, "04/02/2020", "15:50", "Sihle", "none");
+addNewVisitor("Sbongile", 13, "04/02/2020", "15:50", "Sihle", "none");
 
 const listAllVisits = async() => {
+    const SQL = `SELECT visitor_ID, visitor_name FROM visitors;`
     try {
-        let SQL = `SELECT visitor_ID, visitor_name FROM visitors;`
-        let results = await client.query(SQL);
-        console.log("Return for listAllVisits: " + results.rows);
-        return results.rows;
+        query = await client.query(SQL);
+        console.log(query.rows)
     } catch (e) {
         throw e;
     }
@@ -68,24 +75,39 @@ deleteVisit(3);
 // taking row, a condition and value parameters because I need to know where, when and what am i updating in a record
 const updateVisit = async(id, where, value) => {
     try {
-        await client.query('UPDATE visitors SET $2 = $3 WHEN visitor_ID=$1;', [id, where, value]);
+        await client.query(`UPDATE visitors SET ${where}= $2 WHERE visitor_ID=$1;`, [id, value]);
     } catch (e) {
         console.log(e);
         throw e;
     }
 };
 
-updateVisit(4, 'visitor_name', 'Shan');
+updateVisit(4, "visitor_name", "Shanny");
+updateVisit(4, 'visitor_age', '22');
 
-// const veiwVisit = () => {
+const veiwVisit = async(id) => {
+    try {
+        const query = await client.query(`SELECT * FROM visitors WHERE visitor_ID=$1;`, [id]);
+        console.log(query.rows)
+        client.end();
+    } catch (e) {
+        console.log(e);
+        client.end();
+        throw e;
+    }
+    emptyVisits();
+};
 
-// };
+veiwVisit(4);
 
-// veiwVisit()
-
-// const emptyVisits = () => {
-
-// };
-
-// emptyVisits()
-
+const emptyVisits = async() => {
+    myclient.connect();
+    try {
+        await myclient.query('DELETE FROM visitors;');
+        myclient.end();
+    } catch (e) {
+        console.log(e);
+        myclient.end();
+        throw e;
+    }
+};
