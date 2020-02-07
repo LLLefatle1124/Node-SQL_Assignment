@@ -8,13 +8,19 @@ let {
 } = require("../src/MyDatabase")
 
 let obj = {
-    
+
     visitor_name: "KC",
     visitor_age: 12,
     date_of_visit: new Date("04/02/2020"),
     time_of_visit: "15:50:00",
     name_of_assistant: "Sihle",
     comments: "none"
+};
+
+let obj1 = {
+
+    visitor_name: "KC"
+
 };
 
 describe("AddNewVisitor function", () => {
@@ -34,10 +40,9 @@ describe("listAllVisits function", () => {
     it("list all visitors from a visitors table", async(done) => {
         record = await listAllVisits();
         done();
-        // expect(record).toEqual(obj.visitor_name);
-        // expect(record[0]).toEqual(obj.visitor_age);
-        // expect(record[0]).toEqual(obj.date_of_visit);
-        expect(record[0].time_of_visit).toEqual(obj.time_of_visit);
+        delete record[0].visitor_id;
+        
+        expect(record[0]).toEqual(obj1);
         // expect(record).toEqual(obj.name_of_assistant);
         // expect(record).toEqual(obj.comments);
     })
