@@ -3,7 +3,7 @@ const {Client} = require("pg");
 const client = new Client({
   user: "user",
   host: "localhost",
-  database: "mydatabase",
+  database: "MyDatabase",
   password: "pass",
   port: 5432
 });
@@ -11,7 +11,7 @@ const client = new Client({
 const myclient = new Client({
     user: "user",
     host: "localhost",
-    database: "mydatabase",
+    database: "MyDatabase",
     password: "pass",
     port: 5432
   });
@@ -42,22 +42,23 @@ const addNewVisitor = async(name, age, visit_date, visit_time, assistant_name, c
     }
 };
 
-addNewVisitor("Nolo", 12, "04/02/2020", "15:50", "Sihle", "none");
-addNewVisitor("KC", 12, "04/02/2020", "15:50", "Sihle", "none");
-addNewVisitor("Sihle", 12, "04/02/2020", "15:50", "Sihle", "none");
-addNewVisitor("Sbongile", 13, "04/02/2020", "15:50", "Sihle", "none");
+// addNewVisitor("Nolo", 12, "04/02/2020", "15:50", "Sihle", "none");
+// addNewVisitor("KC", 12, "04/02/2020", "15:50", "Sihle", "none");
+// addNewVisitor("Sihle", 12, "04/02/2020", "15:50", "Sihle", "none");
+// addNewVisitor("Sbongile", 13, "04/02/2020", "15:50", "Sihle", "none");
 
 const listAllVisits = async() => {
     const SQL = `SELECT visitor_ID, visitor_name FROM visitors;`
     try {
         query = await client.query(SQL);
-        console.log(query.rows)
+        console.log(query.rows);
+        return query.rows;
     } catch (e) {
         throw e;
     }
 };
 
-listAllVisits();
+// listAllVisits();
 
 // taking an ID parameter because I need to delete a specific record
 const deleteVisit = async(id) => {
@@ -69,8 +70,8 @@ const deleteVisit = async(id) => {
     }
 };
 
-deleteVisit(1);
-deleteVisit(3);
+// deleteVisit(1);
+// deleteVisit(3);
 
 // taking row, a condition and value parameters because I need to know where, when and what am i updating in a record
 const updateVisit = async(id, where, value) => {
@@ -82,8 +83,8 @@ const updateVisit = async(id, where, value) => {
     }
 };
 
-updateVisit(4, "visitor_name", "Shanny");
-updateVisit(4, 'visitor_age', '22');
+// updateVisit(4, "visitor_name", "Shanny");
+// updateVisit(4, 'visitor_age', '22');
 
 const veiwVisit = async(id) => {
     try {
@@ -98,7 +99,7 @@ const veiwVisit = async(id) => {
     emptyVisits();
 };
 
-veiwVisit(4);
+// veiwVisit(4);
 
 const emptyVisits = async() => {
     myclient.connect();
@@ -111,3 +112,12 @@ const emptyVisits = async() => {
         throw e;
     }
 };
+
+module.exports = {
+    emptyVisits,
+    veiwVisit,
+    updateVisit,
+    deleteVisit,
+    listAllVisits,
+    addNewVisitor
+}
