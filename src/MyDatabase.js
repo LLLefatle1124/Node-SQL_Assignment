@@ -80,8 +80,6 @@ const emptyVisits = async() => {
     }
 };
 
-addNewVisitor('name', 12, '10/10/1997', '12:30', 'assistant_name', 'comments');
-
 module.exports = {
     emptyVisits,
     veiwVisit,
