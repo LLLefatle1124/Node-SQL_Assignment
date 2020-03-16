@@ -1,21 +1,14 @@
 // establishing a connection to a database
-const {Client} = require("pg");
-const client = new Client({
-  user: "user",
-  host: "localhost",
-  database: "MyDatabase",
-  password: "pass",
-  port: 5432
-});
-
+require('dotenv').config();
+const { Client } = require("pg");
+const client = new Client();
 client.connect();
 
-// function to save a new visitor to MyDatabase
 const addNewVisitor = async(name, age, visit_date, visit_time, assistant_name, comments) => {
     try {
         let result = await client.query(
 
-        `INSERT INTO visitors(
+            `INSERT INTO visitors(
             visitor_name, 
             visitor_age, 
             date_of_visit, 
@@ -25,8 +18,8 @@ const addNewVisitor = async(name, age, visit_date, visit_time, assistant_name, c
             VALUES($1, $2, $3, $4, $5, $6)
             RETURNING *;`,
 
-        [name, age, visit_date, visit_time, assistant_name, comments]
-        
+            [name, age, visit_date, visit_time, assistant_name, comments]
+
         );
 
         return result.rows;
@@ -47,7 +40,6 @@ const listAllVisits = async() => {
     }
 };
 
-// taking an ID parameter because I need to delete a specific record
 const deleteVisit = async(id) => {
     try {
         let deleted = await client.query(`DELETE FROM visitors WHERE visitor_ID=$1;`, [id]);
@@ -58,7 +50,6 @@ const deleteVisit = async(id) => {
     }
 };
 
-// taking row, a condition and value parameters because I need to know where, when and what am i updating in a record
 const updateVisit = async(id, where, value) => {
     try {
         let updated = await client.query(`UPDATE visitors SET ${where}= $2 WHERE visitor_ID=$1;`, [id, value]);
@@ -88,6 +79,8 @@ const emptyVisits = async() => {
         throw e;
     }
 };
+
+addNewVisitor('name', 12, '10/10/1997', '12:30', 'assistant_name', 'comments');
 
 module.exports = {
     emptyVisits,
